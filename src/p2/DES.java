@@ -1,28 +1,16 @@
 package p2;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+
 import java.security.SecureRandom;
 
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.BufferedBlockCipher;
-import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.engines.DESEngine;
-import org.bouncycastle.crypto.engines.DESedeEngine;
 import org.bouncycastle.crypto.generators.DESKeyGenerator;
-import org.bouncycastle.crypto.generators.DESedeKeyGenerator;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.DESParameters;
-import org.bouncycastle.crypto.params.DESedeParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -30,6 +18,8 @@ import org.bouncycastle.util.encoders.Hex;
  * Demostración de cifrado DES con Bouncy Castle
 */
 public class DES {
+	private static final int BYTE = 8;
+	
 	BlockCipher engine = new DESEngine();
 
 	/**
@@ -164,9 +154,10 @@ public class DES {
 			return null;
 		}
 		
-		// Generamos la clave DES con la longitud necesaria para el algoritmo
+		// Generamos la clave DES con la longitud necesaria para el algoritmo en bits
+		// que será de 64 bits de longitud
 		KeyGenerationParameters kgp = new KeyGenerationParameters(sr,
-				(DESParameters.DES_KEY_LENGTH) * 8);
+				(DESParameters.DES_KEY_LENGTH) * BYTE);
 
 		DESKeyGenerator kg = new DESKeyGenerator();
 		kg.init(kgp);

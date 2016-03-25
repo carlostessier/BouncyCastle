@@ -4,11 +4,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.nio.charset.Charset;
-import java.util.List;
 import java.util.Scanner;
 
 public class Utils {
@@ -38,8 +35,8 @@ public class Utils {
 		System.out
 				.println("Introduzca el texto del archivo \n(Escriba 'fin' en una línea para finalizar)");
 		String text = "", line = "";
-		Scanner scan = new Scanner(System.in);
-		try {
+	
+		try (Scanner scan = new Scanner(System.in)){
 			while (!line.equals("fin")) {
 
 				line = scan.nextLine().toLowerCase();
@@ -50,7 +47,6 @@ public class Utils {
 			// scan.close();
 			return saveFile("txt", text.getBytes());
 		} catch (Exception e) {
-			scan.close();
 			System.out.println("Ha ocurrido un error: " + e);
 			return false;
 		}
@@ -71,6 +67,11 @@ public class Utils {
 			saveFile(ext, data);
 		}
 		String filePath = filesPath + fileName + "." + ext;
+		File carpetaFile = new File(filesPath);
+		if (!carpetaFile.exists())
+		{
+			carpetaFile.mkdirs();
+		}
 		try {
 			BufferedOutputStream keystream = new BufferedOutputStream(
 					new FileOutputStream(filePath));

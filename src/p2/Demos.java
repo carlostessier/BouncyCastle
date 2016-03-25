@@ -1,10 +1,10 @@
 package p2;
 
-import java.util.Scanner;
-
-import org.bouncycastle.util.encoders.Hex;
 
 public class Demos {
+	
+	static java.util.Scanner scanner;
+
 
 	public static void main(String[] args) {
 		Demos instance = new Demos();
@@ -55,7 +55,8 @@ public class Demos {
 		System.out.println("\t 11. Descifrar archivo con RSA");
 		System.out.println("\n q. Terminar ejecución");
 		System.out.print("\n\nSeleccione una opción y pulse ENTER:");
-		Scanner scanner = new Scanner(System.in);
+		
+		scanner = new java.util.Scanner (System.in);
 		String selectedOption = scanner.nextLine();
 
 		if (!selectedOption.matches("-?\\d+?") && !selectedOption.equals("q")) {
@@ -108,5 +109,6 @@ public class Demos {
 		}
 		Utils.instance().clearConsole();
 		doMenu();
+		
 	}
 }
