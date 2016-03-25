@@ -6,28 +6,31 @@ import java.security.SecureRandom;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.KeyGenerationParameters;
-import org.bouncycastle.crypto.engines.DESEngine;
-import org.bouncycastle.crypto.generators.DESKeyGenerator;
+import org.bouncycastle.crypto.engines.DESedeEngine;
+import org.bouncycastle.crypto.generators.DESedeKeyGenerator;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
-import org.bouncycastle.crypto.params.DESParameters;
+import org.bouncycastle.crypto.params.DESedeParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Hex;
 
 /**
- * Demostración de cifrado DES con Bouncy Castle
+ * Demostración de cifrado 3DES (DESede) con Bouncy Castle
 */
 public class DES3 {
-	BlockCipher engine = new DESEngine();
+	
+	private static final String EXTENSION_CIFRADO = "tripleencdes";
+	private static final String EXTENSION_CLAVE = "tripledeskey";
+	BlockCipher engine = new DESedeEngine();
 
 	/**
-	 * Gestiona la creación de una clave DES
+	 * Gestiona la creación de una clave 3 DES
 	 */
 	public void doGenerateKey() {
 		byte[] key = generateKey();
 		if (key != null) {
 			System.out.println("Clave generada:" + new String(Hex.encode(key)));
-			Utils.instance().saveFile("deskey", Hex.encode(key));
+			Utils.instance().saveFile(EXTENSION_CLAVE, Hex.encode(key));
 		}
 	}
 
@@ -40,13 +43,13 @@ public class DES3 {
 		if (text!=null) {
 			// Clave a usar
 			byte[] key = Utils.instance().doSelectFile("Seleccione una clave",
-					"deskey");
+					EXTENSION_CLAVE);
 			if (key != null) {
 				// La almacenamos en hexadecimal para que sea legible en el archivo
 				byte[] res = encrypt(Hex.decode(key),text);
 				System.out.println("Texto cifrado (en hexadecimal):"
 						+ new String(Hex.encode(res)));
-				Utils.instance().saveFile("encdes", Hex.encode(res));
+				Utils.instance().saveFile(EXTENSION_CIFRADO, Hex.encode(res));
 			}
 		} else {
 			// No se desea continuar con la ejecución
@@ -59,13 +62,13 @@ public class DES3 {
 	public void doDecrypt() {
 		// Archivo a descifrar
 		byte[] fileContent = Utils.instance().doSelectFile(
-				"Seleccione una archivo cifrado", "encdes");
+				"Seleccione una archivo cifrado", EXTENSION_CIFRADO);
 		if (fileContent == null) {
 			return;
 		}
 		// Clave a usar
 		byte[] key = Utils.instance().doSelectFile("Seleccione una clave",
-				"deskey");
+				EXTENSION_CLAVE);
 		if (key != null) {
 			// Desciframos el archivo
 			byte[] res = decrypt(Hex.decode(key), Hex.decode(fileContent));
@@ -135,10 +138,10 @@ public class DES3 {
 	}
 
 	/**
-	 * Genera una Clave para el cifrado DES a partir de un número aleatorio
+	 * Genera una Clave para el cifrado 3 DES a partir de un número aleatorio
 	 * "seguro"
 	 * 
-	 * @return Clave generada con la longitud de DESParameters
+	 * @return Clave generada con la longitud de DESedeParameters
 	 */
 	public byte[] generateKey() {
 		// Creamos un generador de aleatorios "seguro"
@@ -152,11 +155,12 @@ public class DES3 {
 			return null;
 		}
 		
-		// Generamos la clave DES con la longitud necesaria para el algoritmo
+		// Generamos la clave 3 DES con la longitud necesaria para el algoritmo
 		KeyGenerationParameters kgp = new KeyGenerationParameters(sr,
-				(DESParameters.DES_KEY_LENGTH) * 8);
+				(DESedeParameters.DES_EDE_KEY_LENGTH) * 8);
 
-		DESKeyGenerator kg = new DESKeyGenerator();
+		DESedeKeyGenerator kg = new DESedeKeyGenerator();
+		
 		kg.init(kgp);
 
 		/*
